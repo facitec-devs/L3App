@@ -2,6 +2,8 @@ package py.edu.facitec.l3app.formulario;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -11,16 +13,25 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JCheckBox;
 
+import py.edu.facitec.l3app.dao.ClienteDao;
+import py.edu.facitec.l3app.model.Cliente;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
 public class FormCliente extends JDialog {
 
 	private final JPanel contentPanel = new JPanel();
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
-	private JTextField textField_6;
-	private JTextField textField_7;
+	private JTextField tfCodigo;
+	private JTextField tfNombre;
+	private JTextField tfRuc;
+	private JTextField tfTelefono;
+	private JTextField tfEmail;
+	private JTextField tfFechaRegistro;
+	private JTextField tfSueldo;
+	private SimpleDateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+	private JTextField tfDireccion;
+	private JCheckBox chActivo;
 
 	/**
 	 * Launch the application.
@@ -39,14 +50,14 @@ public class FormCliente extends JDialog {
 	 * Create the dialog.
 	 */
 	public FormCliente() {
-		setBounds(100, 100, 476, 338);
+		setBounds(100, 100, 538, 439);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		contentPanel.setLayout(null);
 		
 		JLabel lblRegistroCliente = new JLabel("Registro Cliente");
-		lblRegistroCliente.setBounds(172, 0, 89, 14);
+		lblRegistroCliente.setBounds(235, 0, 89, 14);
 		contentPanel.add(lblRegistroCliente);
 		
 		JLabel lblCodigo = new JLabel("Codigo:");
@@ -70,50 +81,151 @@ public class FormCliente extends JDialog {
 		contentPanel.add(lblEmail);
 		
 		JLabel lblFechaRegistro = new JLabel("Fecha Registro:");
-		lblFechaRegistro.setBounds(10, 214, 76, 14);
+		lblFechaRegistro.setBounds(10, 263, 76, 14);
 		contentPanel.add(lblFechaRegistro);
 		
 		JLabel lblSueldo = new JLabel("Sueldo:");
-		lblSueldo.setBounds(10, 239, 46, 14);
+		lblSueldo.setBounds(10, 291, 46, 14);
 		contentPanel.add(lblSueldo);
 		
-		textField = new JTextField();
-		textField.setBounds(52, 29, 86, 20);
-		contentPanel.add(textField);
-		textField.setColumns(10);
+		tfCodigo = new JTextField();
+		tfCodigo.setBounds(66, 29, 130, 20);
+		contentPanel.add(tfCodigo);
+		tfCodigo.setColumns(10);
 		
-		textField_1 = new JTextField();
-		textField_1.setBounds(52, 57, 86, 20);
-		contentPanel.add(textField_1);
-		textField_1.setColumns(10);
+		tfNombre = new JTextField();
+		tfNombre.setBounds(66, 60, 379, 20);
+		contentPanel.add(tfNombre);
+		tfNombre.setColumns(10);
 		
-		textField_2 = new JTextField();
-		textField_2.setBounds(52, 89, 86, 20);
-		contentPanel.add(textField_2);
-		textField_2.setColumns(10);
+		tfRuc = new JTextField();
+		tfRuc.setBounds(66, 90, 130, 20);
+		contentPanel.add(tfRuc);
+		tfRuc.setColumns(10);
 		
-		textField_3 = new JTextField();
-		textField_3.setBounds(66, 116, 86, 20);
-		contentPanel.add(textField_3);
-		textField_3.setColumns(10);
+		tfTelefono = new JTextField();
+		tfTelefono.setBounds(66, 116, 130, 20);
+		contentPanel.add(tfTelefono);
+		tfTelefono.setColumns(10);
 		
-		textField_4 = new JTextField();
-		textField_4.setBounds(52, 151, 86, 20);
-		contentPanel.add(textField_4);
-		textField_4.setColumns(10);
+		tfEmail = new JTextField();
+		tfEmail.setBounds(66, 151, 384, 20);
+		contentPanel.add(tfEmail);
+		tfEmail.setColumns(10);
 		
-		textField_6 = new JTextField();
-		textField_6.setBounds(96, 211, 86, 20);
-		contentPanel.add(textField_6);
-		textField_6.setColumns(10);
+		tfFechaRegistro = new JTextField();
+		tfFechaRegistro.setBounds(96, 260, 100, 20);
+		contentPanel.add(tfFechaRegistro);
+		tfFechaRegistro.setColumns(10);
+		tfFechaRegistro.setText(formatoFecha.format(new Date()));
 		
-		textField_7 = new JTextField();
-		textField_7.setBounds(52, 236, 86, 20);
-		contentPanel.add(textField_7);
-		textField_7.setColumns(10);
+		tfSueldo = new JTextField();
+		tfSueldo.setBounds(66, 288, 130, 20);
+		contentPanel.add(tfSueldo);
+		tfSueldo.setColumns(10);
 		
-		JCheckBox chckbxActivo = new JCheckBox("Activo");
-		chckbxActivo.setBounds(55, 185, 97, 23);
-		contentPanel.add(chckbxActivo);
+		chActivo = new JCheckBox("Activo");
+		chActivo.setBounds(66, 230, 97, 23);
+		contentPanel.add(chActivo);
+		
+		JButton btnBuscar = new JButton("Buscar");
+		btnBuscar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				consultarClientePorCodigo();
+			}
+		});
+		btnBuscar.setBounds(220, 28, 89, 23);
+		contentPanel.add(btnBuscar);
+		
+		JButton btnGuardar = new JButton("Guardar");
+		btnGuardar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {	
+				guardarCliente();
+			}
+		});
+		btnGuardar.setBounds(220, 353, 89, 23);
+		contentPanel.add(btnGuardar);
+		
+		JButton btnModificar = new JButton("Modificar");
+		btnModificar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				modificarCliente();
+			}
+		});
+		btnModificar.setBounds(319, 353, 89, 23);
+		contentPanel.add(btnModificar);
+		
+		JButton btnEliminar = new JButton("Eliminar");
+		btnEliminar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				eliminarCliente();
+			}
+		});
+		btnEliminar.setBounds(418, 353, 89, 23);
+		contentPanel.add(btnEliminar);
+		
+		JLabel lblEstado = new JLabel("Estado:");
+		lblEstado.setBounds(10, 234, 46, 14);
+		contentPanel.add(lblEstado);
+		
+		JLabel lblDireccion = new JLabel("Direccion:");
+		lblDireccion.setBounds(10, 197, 53, 14);
+		contentPanel.add(lblDireccion);
+		
+		tfDireccion = new JTextField();
+		tfDireccion.setBounds(65, 194, 385, 20);
+		contentPanel.add(tfDireccion);
+		tfDireccion.setColumns(10);
+	}
+	
+	private void guardarCliente(){
+		Cliente cliente = new Cliente();
+		cliente.setNombre(tfNombre.getText());
+		cliente.setRuc(tfRuc.getText());
+		cliente.setTelefono(tfTelefono.getText());
+		cliente.setEmail(tfEmail.getText());
+		cliente.setDireccion(tfDireccion.getText());
+		cliente.setActivo(chActivo.isSelected());
+		cliente.setFecha_registro(new Date());
+		cliente.setSueldo(Double.parseDouble(tfSueldo.getText()));
+		ClienteDao.guardarCliente(cliente);
+		
+	}
+	
+	private void consultarClientePorCodigo(){
+		int codigo = Integer.parseInt(tfCodigo.getText());
+		Cliente cliente = ClienteDao.recuperarClientePorCodigo(codigo);
+		System.out.println(cliente);
+		if(cliente != null){
+			tfNombre.setText(cliente.getNombre());
+			tfRuc.setText(cliente.getRuc());
+			tfTelefono.setText(cliente.getTelefono());
+			tfEmail.setText(cliente.getEmail());
+			tfDireccion.setText(cliente.getDireccion());
+			chActivo.setSelected(cliente.isActivo());
+			tfFechaRegistro.setText(formatoFecha.format(cliente.getFecha_registro()));
+			tfSueldo.setText(cliente.getSueldo()+"");
+				
+		}
+		
+	}
+	
+	private void modificarCliente(){
+		Cliente cliente = new Cliente();
+		cliente.setCodigo(Integer.parseInt(tfCodigo.getText()));
+		cliente.setNombre(tfNombre.getText());
+		cliente.setRuc(tfRuc.getText());
+		cliente.setTelefono(tfTelefono.getText());
+		cliente.setEmail(tfEmail.getText());
+		cliente.setDireccion(tfDireccion.getText());
+		cliente.setActivo(chActivo.isSelected());
+		cliente.setSueldo(Double.parseDouble(tfSueldo.getText()));
+		ClienteDao.modificarCliente(cliente);	
+		
+	}
+	
+	private void eliminarCliente(){
+		int codigo = Integer.parseInt(tfCodigo.getText());
+		ClienteDao.eliminarClientePorCodigo(codigo);
 	}
 }
